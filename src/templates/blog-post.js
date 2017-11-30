@@ -5,6 +5,18 @@ import get from 'lodash/get'
 import Bio from '../components/Bio'
 import { rhythm, scale } from '../utils/typography'
 
+const ImageComponent = (props) => {
+  const {image} = props;
+  if(image) {
+    return (
+      <div>
+        <p><b>Image in frontmatter but no image at path: <i>{image.relativePath}</i></b></p>
+        <img src="{image.relativePath}" alt="Alt text, cause... no image. :("/>
+      </div>
+    );
+  }
+  return null;
+}
 class BlogPostTemplate extends React.Component {
   render() {
     const post = this.props.data.markdownRemark
@@ -24,6 +36,7 @@ class BlogPostTemplate extends React.Component {
         >
           {post.frontmatter.date}
         </p>
+        <ImageComponent image={post.frontmatter.image} />
         <div dangerouslySetInnerHTML={{ __html: post.html }} />
         <hr
           style={{
@@ -52,6 +65,10 @@ export const pageQuery = graphql`
       frontmatter {
         title
         date(formatString: "MMMM DD, YYYY")
+        image {
+          id
+          relativePath
+        }
       }
     }
   }
