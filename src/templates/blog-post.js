@@ -4,19 +4,8 @@ import get from 'lodash/get'
 
 import Bio from '../components/Bio'
 import { rhythm, scale } from '../utils/typography'
+import Img from "gatsby-image"
 
-const ImageComponent = (props) => {
-  const {image} = props;
-  if(image) {
-    return (
-      <div>
-        <p><b>Image in frontmatter but no image at path: <i>{image.relativePath}</i></b></p>
-        <img src="{image.relativePath}" alt="Alt text, cause... no image. :("/>
-      </div>
-    );
-  }
-  return null;
-}
 class BlogPostTemplate extends React.Component {
   render() {
     const post = this.props.data.markdownRemark
@@ -36,7 +25,7 @@ class BlogPostTemplate extends React.Component {
         >
           {post.frontmatter.date}
         </p>
-        <ImageComponent image={post.frontmatter.image} />
+        <Img sizes={post.frontmatter.image.childImageSharp.sizes} />
         <div dangerouslySetInnerHTML={{ __html: post.html }} />
         <hr
           style={{
@@ -50,6 +39,8 @@ class BlogPostTemplate extends React.Component {
 }
 
 export default BlogPostTemplate
+
+
 
 export const pageQuery = graphql`
   query BlogPostBySlug($slug: String!) {
@@ -66,8 +57,11 @@ export const pageQuery = graphql`
         title
         date(formatString: "MMMM DD, YYYY")
         image {
-          id
-          relativePath
+          childImageSharp {
+            sizes(maxWidth: 700) {
+              ...GatsbyImageSharpSizes_noBase64
+            }
+          }
         }
       }
     }
